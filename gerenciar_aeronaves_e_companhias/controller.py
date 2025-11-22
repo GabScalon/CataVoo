@@ -1,6 +1,6 @@
-from modelo import CompanhiaAerea, Endereco, Aeronave
+from entities import CompanhiaAerea, Endereco, Aeronave
 from persistence import CompanhiaDAO, EnderecoDAO, PilotoDAO, AeronaveDAO, VooDAO
-from typing import cast, Optional
+from typing import Optional
 
 class ControladorCompanhia:
     def __init__(self):

@@ -1,5 +1,6 @@
 import datetime
 from typing import Dict
+#  from entities import Usuario, Aeronave, Voo TODO: Fazer a importação corretamente após implementar a persistência correta
 
 # --- Modelos e Dados (Auto-contido) ---
 

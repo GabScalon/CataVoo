@@ -3,6 +3,7 @@ from tkinter import messagebox, ttk
 import pickle
 import os
 from typing import Dict, Optional
+#  from entities import Usuario TODO: Fazer o import corretamente após corrigir a persistência
 
 # --- Modelos de Dados ---
 

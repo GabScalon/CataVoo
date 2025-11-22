@@ -2,7 +2,7 @@ import tkinter as tk
 from view import TelaGerenciamento
 from persistence import (PilotoDAO, VooDAO, CompanhiaDAO, 
                          AeronaveDAO, EnderecoDAO)
-from modelo import Piloto, Voo, CompanhiaAerea, Aeronave, Endereco
+from entities import Piloto, Voo, CompanhiaAerea, Aeronave, Endereco
 from datetime import datetime
 
 def criar_dados_simulacao():
