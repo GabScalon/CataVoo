@@ -7,4 +7,4 @@ class Usuario:
         self.nome = nome
         self.login = login
         self.senha = senha
-        self.id: Optional[int] = id if id is not None else (hash(login) % 100000)
+        self.id = id

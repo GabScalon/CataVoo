@@ -1,5 +1,5 @@
 from typing import Optional
-from endereco import Endereco
+from .endereco import Endereco
 
 class CompanhiaAerea:
     def __init__(self, nome: str, enderecoSede: Optional[Endereco] = None, 

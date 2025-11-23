@@ -1,5 +1,5 @@
 from typing import Optional
-from usuario import Usuario
+from .usuario import Usuario
 
 
 class Administrador(Usuario):

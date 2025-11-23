@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from tipo_de_voo import TipoDeVoo
+from .tipo_de_voo import TipoDeVoo
 
 
 class Voo:

@@ -1,5 +1,5 @@
 from typing import Optional, List
-from endereco import Endereco
+from .endereco import Endereco
 
 
 class Aeroporto:
