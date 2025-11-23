@@ -1,16 +1,21 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from controller import ControladorCompanhia, ControladorAeronave
+
+# --- MUDANÇA PRINCIPAL: Imports apontando para a nova pasta 'controllers' ---
+from controllers import CompanhiaController, AeronaveController
 
 # Tela Principal (Menu)
 class TelaGerenciamento(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        parent.title("Menu de Gerenciamento")
-        parent.geometry("300x200")
+        # Configurações da janela principal
+        # Nota: Se for rodar embutido na main.py, o parent define o tamanho
+        # Se for rodar isolado para teste, descomente as linhas abaixo se necessário
+        # parent.title("Menu de Gerenciamento - UC03")
+        # parent.geometry("300x200")
 
-        lbl_titulo = tk.Label(self, text="Opções de Gerenciamento", font=("Arial", 14))
+        lbl_titulo = tk.Label(self, text="Gerenciar Frota e Empresas", font=("Arial", 14))
         lbl_titulo.pack(pady=20)
 
         btn_ger_companhia = tk.Button(self, text="Gerenciar Companhias Aéreas",
@@ -22,12 +27,12 @@ class TelaGerenciamento(tk.Frame):
         btn_ger_aeronave.pack(pady=10)
 
     def abrir_ger_companhias(self):
-        TelaCRUD(self.parent, "Gerenciar Companhias", ControladorCompanhia())
+        TelaCRUD(self.parent, "Gerenciar Companhias", CompanhiaController())
 
     def abrir_ger_aeronaves(self):
-        TelaCRUD(self.parent, "Gerenciar Aeronaves", ControladorAeronave())
+        TelaCRUD(self.parent, "Gerenciar Aeronaves", AeronaveController())
 
-# Tela Genérica de CRUD
+# Tela Genérica de CRUD (Create, Read, Update, Delete)
 class TelaCRUD(tk.Toplevel):
     def __init__(self, parent, titulo, controlador):
         super().__init__(parent)
@@ -37,7 +42,8 @@ class TelaCRUD(tk.Toplevel):
         self.geometry("600x400")
 
         self.controlador = controlador
-        self.is_companhia = isinstance(self.controlador, ControladorCompanhia)
+        # Verifica qual tipo de controlador é para adaptar a listagem
+        self.is_companhia = isinstance(self.controlador, CompanhiaController)
 
         self._criar_widgets()
         self.atualizar_lista()
@@ -55,6 +61,7 @@ class TelaCRUD(tk.Toplevel):
         btn_excluir = tk.Button(frm_botoes, text="Excluir Selecionado", command=self.excluir_item)
         btn_excluir.pack(side='left', padx=5)
 
+        # Colunas da Tabela
         cols = ('id', 'nome', 'extra')
         self.tree = ttk.Treeview(self, columns=cols, show='headings')
         self.tree.heading('id', text='ID')
@@ -67,6 +74,7 @@ class TelaCRUD(tk.Toplevel):
         self.tree.pack(fill='both', expand=True, padx=10, pady=10)
 
     def atualizar_lista(self):
+        # Limpa a lista atual
         for i in self.tree.get_children():
             self.tree.delete(i)
 
@@ -75,10 +83,11 @@ class TelaCRUD(tk.Toplevel):
             for item in lista:
                 self.tree.insert('', 'end', values=(item.id, item.nome, item.email))
         else:
+            # Para aeronaves, queremos mostrar o nome da companhia, não só o ID
             companhias = {c.id: c.nome for c in self.controlador.get_all_companhias()}
             lista = self.controlador.get_all_aeronaves()
             for item in lista:
-                nome_comp = companhias.get(item.companhia_id, "ID não encontrado")
+                nome_comp = companhias.get(item.companhia_id, f"ID {item.companhia_id}")
                 self.tree.insert('', 'end', values=(item.id, item.modelo, nome_comp))
 
     def _get_id_selecionado(self):
@@ -106,6 +115,7 @@ class TelaCRUD(tk.Toplevel):
         if not item_id:
             return
 
+        # Busca o objeto pelo ID usando o DAO dentro do controlador
         if self.is_companhia:
             item_para_editar = self.controlador.companhia_dao.get_by_id(item_id)
             FormularioCompanhia(self, self.controlador, self.atualizar_lista, item_para_editar)
@@ -123,6 +133,7 @@ class TelaCRUD(tk.Toplevel):
                                    parent=self):
             return
 
+        # Chama o método de exclusão do controlador (que já faz as validações de dependência)
         sucesso, msg = self.controlador.excluir(item_id)
 
         if sucesso:
@@ -184,11 +195,13 @@ class FormularioCompanhia(tk.Toplevel):
     def _preencher_formulario(self):
         if not self.companhia:
             return
-
+        
+        # Preenche campos da Companhia
         self.entries['nome'].insert(0, self.companhia.nome)
         self.entries['email'].insert(0, self.companhia.email)
         self.entries['numeroContato'].insert(0, self.companhia.numeroContato)
 
+        # Preenche campos do Endereço (se existir)
         if self.companhia.enderecoSede:
             end = self.companhia.enderecoSede
             self.entries['rua'].insert(0, end.rua)
@@ -198,24 +211,8 @@ class FormularioCompanhia(tk.Toplevel):
             self.entries['estado'].insert(0, end.estado)
             self.entries['pais'].insert(0, end.pais)
 
-    def operacaoSucesso(self, msg):
-        self.exibirMensagemSucesso(msg)
-        self.exibirOpcoesGerenciamento()
-
-    def exibirMensagemSucesso(self, msg):
-        messagebox.showinfo("Sucesso", msg, parent=self)
-    
-    def erroValidacao(self, msg):
-        self.exibirMensagemErro(msg)
-
-    def exibirMensagemErro(self, msg):
-        messagebox.showerror("Erro de Validação", msg, parent=self)
-
-    def exibirOpcoesGerenciamento(self):
-        self.callback()
-        self.destroy()
-
     def salvar(self):
+        # Coleta dados da UI
         dadosCompanhia = {
             'nome': self.entries['nome'].get(),
             'email': self.entries['email'].get(),
@@ -230,17 +227,20 @@ class FormularioCompanhia(tk.Toplevel):
             'pais': self.entries['pais'].get(),
         }
 
+        # Chama o controller apropriado
         if self.companhia:
-            sucesso, msg = self.controlador.atualizar(
-                self.companhia.id, dadosCompanhia, dadosEndereco)
+            # Edição
+            sucesso, msg = self.controlador.atualizar(self.companhia.id, dadosCompanhia, dadosEndereco)
         else:
+            # Cadastro
             sucesso, msg = self.controlador.cadastrar(dadosCompanhia, dadosEndereco)
 
-        # Tratamento do Retorno (Linhas tracejadas do diagrama)
         if sucesso:
-            self.operacaoSucesso(msg)
+            messagebox.showinfo("Sucesso", msg, parent=self)
+            self.callback()
+            self.destroy()
         else:
-            self.erroValidacao(msg)
+            messagebox.showerror("Erro de Validação", msg, parent=self)
 
 
 # Formulário de Cadastro/Edição de AERONAVE
@@ -257,6 +257,7 @@ class FormularioAeronave(tk.Toplevel):
         self.aeronave = aeronave
         self.entries = {}
 
+        # Prepara dados para o Combobox de Companhias
         self.companhias = self.controlador.get_all_companhias()
         self.map_comp_id_nome = {c.id: c.nome for c in self.companhias}
         self.map_comp_nome_id = {c.nome: c.id for c in self.companhias}
@@ -281,6 +282,7 @@ class FormularioAeronave(tk.Toplevel):
         lbl_dados = tk.Label(frm_principal, text="Dados da Aeronave", font=("Arial", 12, "bold"))
         lbl_dados.pack(pady=5)
 
+        # Combobox para selecionar a Companhia
         frm_combo = tk.Frame(frm_principal)
         frm_combo.pack(fill='x', padx=5, pady=5)
         lbl_combo = tk.Label(frm_combo, text="Companhia *", width=20, anchor='w')
@@ -307,26 +309,10 @@ class FormularioAeronave(tk.Toplevel):
         self.entries['lotacaoMaxima'].insert(0, self.aeronave.lotacaoMaxima)
         self.entries['capacidadeDeCarga'].insert(0, self.aeronave.capacidadeDeCarga)
 
+        # Seleciona a companhia correta no Combobox
         nome_comp = self.map_comp_id_nome.get(self.aeronave.companhia_id)
         if nome_comp:
             self.combo_comp.set(nome_comp)
-
-    def operacaoSucesso(self, msg):
-        self.exibirMensagemSucesso(msg)
-        self.exibirOpcoesGerenciamento()
-
-    def exibirMensagemSucesso(self, msg):
-        messagebox.showinfo("Sucesso", msg, parent=self)
-
-    def erroValidacao(self, msg):
-        self.exibirMensagemErro(msg)
-
-    def exibirMensagemErro(self, msg):
-        messagebox.showerror("Erro de Validação", msg, parent=self)
-
-    def exibirOpcoesGerenciamento(self):
-        self.callback()
-        self.destroy()
 
     def salvar(self):
         nome_comp_selecionada = self.combo_comp.get()
@@ -346,6 +332,8 @@ class FormularioAeronave(tk.Toplevel):
             sucesso, msg = self.controlador.cadastrar(dadosAeronave)
 
         if sucesso:
-            self.operacaoSucesso(msg)
+            messagebox.showinfo("Sucesso", msg, parent=self)
+            self.callback()
+            self.destroy()
         else:
-            self.erroValidacao(msg)
+            messagebox.showerror("Erro de Validação", msg, parent=self)

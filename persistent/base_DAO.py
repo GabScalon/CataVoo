@@ -6,14 +6,21 @@ from typing import TypeVar, Protocol, Optional, List, Generic, Dict
 class HasId(Protocol):
     id: Optional[int]
 
-# Define o Tipo Genérico T, que deve respeitar o protocolo HasId
+# Define o Tipo Genérico T
 T = TypeVar('T', bound=HasId)
 
-# A classe herda de Generic[T]
 class PickleDAO(Generic[T]):
     
     def __init__(self, filename: str):
-        self.filename = filename
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+
+        base_dir = os.path.join(base_dir, "dados")
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+
+        # Combina o caminho da pasta com o nome do arquivo
+        self.filename = os.path.join(base_dir, filename)
+        
         self.data: Dict[int, T] = self._load()
 
     def _load(self) -> Dict[int, T]:

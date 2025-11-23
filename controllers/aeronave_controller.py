@@ -2,7 +2,7 @@ from typing import Optional
 from persistent import AeronaveDAO, VooDAO, CompanhiaAereaDAO
 from entities import Aeronave
 
-class ControladorAeronave:
+class AeronaveController:
     def __init__(self):
         self.aeronave_dao = AeronaveDAO()
         self.voo_dao = VooDAO()
