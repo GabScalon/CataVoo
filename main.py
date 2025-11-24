@@ -1,6 +1,6 @@
 import tkinter as tk
-from views.login_view import TelaLogin
-from views.menu_view import TelaMenu
+from views.uc01_view import TelaLogin
+from views.menu_principal_view import TelaMenu
 from controllers.usuario_controller import UsuarioController
 from entities.administrador import Administrador
 

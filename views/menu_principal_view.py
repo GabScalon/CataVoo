@@ -1,6 +1,6 @@
 import tkinter as tk
-from views.companhia_view import ViewCompanhia
-from views.aeronave_view import ViewAeronave
+from views.uc03b_view import ViewCompanhia
+from views.uc03a_view import ViewAeronave
 
 class TelaMenu(tk.Frame):
     def __init__(self, parent, usuario, on_logout):
