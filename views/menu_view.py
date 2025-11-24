@@ -2,8 +2,8 @@ import tkinter as tk
 from views.companhia_view import ViewCompanhia
 from views.aeronave_view import ViewAeronave
 from views.administrador_view import AdministradorView
-# 1. IMPORTAR A NOVA VIEW
 from views.voo_view import ViewVoo 
+from views.piloto_view import ViewPiloto
 
 class TelaMenu(tk.Frame):
     def __init__(self, parent, usuario, controller, on_logout):
@@ -24,7 +24,7 @@ class TelaMenu(tk.Frame):
         btn_frame = tk.Frame(self)
         btn_frame.pack(pady=10, fill='x', padx=50)
 
-        # 2. BOTÃO DE VOOS (NOVO)
+        # BOTÃO DE VOOS
         # Colocamos em primeiro pois é a função principal do sistema
         btn_voos = tk.Button(
             btn_frame, 
@@ -47,6 +47,12 @@ class TelaMenu(tk.Frame):
             command=self.abrir_aeronaves, font=("Arial", 12), height=2
         )
         btn_aero.pack(fill='x', pady=5)
+
+        # Botão para pilotos
+        tk.Button(
+            btn_frame, text="Gerenciar Pilotos", 
+            command=self.abrir_pilotos, font=("Arial", 12), height=2
+        ).pack(fill='x', pady=5)
 
         # Botão Usuários (Apenas Admin)
         if usuario.__class__.__name__ == 'Administrador':
@@ -71,7 +77,7 @@ class TelaMenu(tk.Frame):
     def abrir_usuarios(self):
         AdministradorView(self.parent, self.controller)
 
-    # 3. MÉTODO PARA ABRIR VOOS
+    # MÉTODO PARA ABRIR VOOS
     def abrir_voos(self):
         """
         Abre a tela de voos passando o usuário logado.
@@ -79,6 +85,9 @@ class TelaMenu(tk.Frame):
         baseado nesse usuário.
         """
         ViewVoo(self.parent, self.usuario)
+    
+    def abrir_pilotos(self):
+        ViewPiloto(self.parent)
 
     def sair(self):
         if self.on_logout:
