@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional, Tuple
 
 from persistent import VooDAO, AeronaveDAO, AeroportoDAO, CompanhiaAereaDAO, PilotoDAO
-from entities import Voo
+from model import Voo
 
 class VooController:
     def __init__(self):
@@ -20,17 +20,17 @@ class VooController:
 
     def buscar_por_destino(self, aeroporto_id: int) -> List[Voo]:
         return self.voo_dao.buscar_por_destino(aeroporto_id)
-    
+
     def get_aeroportos_para_combo(self):
         """Retorna lista de aeroportos para preencher comboboxes na view."""
         return self.aeroporto_dao.get_all()
-        
+
     def get_aeronaves_para_combo(self):
         return self.aeronave_dao.get_all()
-        
+
     def get_companhias_para_combo(self):
         return self.companhia_dao.get_all()
-        
+
     def get_pilotos_para_combo(self):
         return self.piloto_dao.get_all()
 

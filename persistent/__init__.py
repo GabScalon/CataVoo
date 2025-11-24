@@ -3,5 +3,5 @@ from .aeroporto_DAO import AeroportoDAO
 from .companhia_aerea_DAO import CompanhiaAereaDAO
 from .endereco_DAO import EnderecoDAO
 from .piloto_DAO import PilotoDAO
-from .usuario_DAO import UsuarioDAO
+from .usuario_DAO import UsuarioRepository
 from .voo_DAO import VooDAO

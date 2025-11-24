@@ -1,30 +1,39 @@
 import tkinter as tk
-from views.uc01_view import TelaLogin
-from views.menu_principal_view import TelaMenu
+from persistent import UsuarioRepository
 from controllers.usuario_controller import UsuarioController
-from entities.administrador import Administrador
+from views.login_view import TelaLogin
+from views.menu_view import TelaMenu
+from model.dto import CadastroUsuarioDTO
 
-def verificar_setup_inicial():
-    controller = UsuarioController()
-    usuarios = controller.buscar_todos()
+def verificar_setup_inicial(controller):
+    """
+    Verifica se o banco de dados está vazio.
+    Se estiver, cria um usuário ADMINISTRADOR padrão.
+    """
+    # Usa o método público do controller (sem acessar atributos privados com __)
+    usuarios = controller.listar_todos()
     
     if not usuarios:
-        print("--- Banco de usuários vazio. Criando ADMIN padrão... ---")
-        dados_admin = {
-            'nome': 'Administrador Geral',
-            'login': 'admin',
-            'senha': '123', 
-            'cpf': '000.000.000-00',
-            'aeroporto_id': 0
-        }
-        controller.cadastrar(dados_admin, eh_admin=True)
+        print("--- SETUP INICIAL: Banco de dados vazio. ---")
+        print("--- Criando Administrador Padrão... ---")
         
-        dados_func = {
-            'nome': 'João Silva',
-            'login': 'func',
-            'senha': '123'
-        }
-        controller.cadastrar(dados_func, eh_admin=False)
+        # Cria o DTO. Nota: Não passamos senha, pois o sistema gera baseada no CPF.
+        dto = CadastroUsuarioDTO(
+            cpf="000.000.000-00",
+            nome="Super Administrador",
+            email="admin@sistema.com",
+            login="admin",
+            tipo_usuario="ADMINISTRADOR"
+        )
+        
+        status, msg = controller.cadastrar_usuario(dto)
+        
+        print(msg)
+        print("------------------------------------------------")
+        print("DADOS PARA PRIMEIRO ACESSO:")
+        print("Login: admin")
+        print("Senha: 00000000000 (Números do CPF)")
+        print("------------------------------------------------")
 
 class App(tk.Tk):
     def __init__(self):
@@ -32,32 +41,53 @@ class App(tk.Tk):
         self.title("Sistema CataVoo")
         self.geometry("800x600")
         
-        verificar_setup_inicial()
+        # ---------------------------------------------------------
+        # 1. INJEÇÃO DE DEPENDÊNCIA (O "Cérebro" do sistema)
+        # Criamos o Repositório e o Controller aqui. Eles ficam vivos
+        # durante toda a execução do programa.
+        # ---------------------------------------------------------
+        self.repository = UsuarioRepository("usuarios.pkl")
+        self.controller = UsuarioController(self.repository)
+
+        # Roda a verificação antes de mostrar qualquer tela
+        verificar_setup_inicial(self.controller)
         
+        # Esconde a janela principal e abre o login
         self.withdraw() 
         self.mostrar_login()
 
     def mostrar_login(self):
-        """Abre a janela de login."""
-        login_window = TelaLogin(
+        """Abre a janela de login passando o controller."""
+        TelaLogin(
             self, 
+            controller=self.controller, 
             callback_sucesso=self.login_sucesso, 
             on_logout=self.destroy
         )
-        login_window.wait_window() 
 
     def login_sucesso(self, usuario):
-        self.deiconify() 
+        """Chamado quando o login é realizado com sucesso."""
+        self.deiconify() # Mostra a janela principal
         self.usuario_logado = usuario
         
+        # Remove qualquer widget anterior (limpeza da tela)
         for widget in self.winfo_children():
             if isinstance(widget, tk.Frame):
                 widget.destroy()
 
-        menu = TelaMenu(self, usuario, on_logout=self.fazer_logout)
+        # Cria o Menu Principal
+        # IMPORTANTE: Passamos o 'self.controller' para o Menu,
+        # para que ele possa abrir a tela de Gerenciar Usuários depois.
+        menu = TelaMenu(
+            parent=self, 
+            usuario=usuario, 
+            controller=self.controller, # <--- Passando a ferramenta
+            on_logout=self.fazer_logout
+        )
         menu.pack(fill="both", expand=True)
 
     def fazer_logout(self):
+        """Esconde o menu e volta para o login."""
         self.withdraw()
         self.mostrar_login()
 

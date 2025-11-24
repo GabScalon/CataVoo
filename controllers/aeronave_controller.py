@@ -1,6 +1,6 @@
 from typing import Optional
 from persistent import AeronaveDAO, VooDAO, CompanhiaAereaDAO
-from entities import Aeronave
+from model.aeronave import Aeronave
 
 class AeronaveController:
     def __init__(self):

@@ -1,6 +1,6 @@
 from typing import Optional
 from persistent import CompanhiaAereaDAO, AeronaveDAO, PilotoDAO, EnderecoDAO
-from entities import CompanhiaAerea, Endereco
+from model import CompanhiaAerea, Endereco
 
 class CompanhiaController:
     def __init__(self):

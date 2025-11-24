@@ -1,5 +1,5 @@
 from .base_DAO import PickleDAO
-from entities.endereco import Endereco
+from model.endereco import Endereco
 
 
 class EnderecoDAO(PickleDAO[Endereco]):
