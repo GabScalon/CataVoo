@@ -1,5 +1,5 @@
 from .base_DAO import PickleDAO
-from entities.piloto import Piloto
+from model.piloto import Piloto
 
 
 class PilotoDAO(PickleDAO[Piloto]):

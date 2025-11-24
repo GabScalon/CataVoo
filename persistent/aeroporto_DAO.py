@@ -1,5 +1,5 @@
 from .base_DAO import PickleDAO
-from entities.aeroporto import Aeroporto
+from model.aeroporto import Aeroporto
 
 
 class AeroportoDAO(PickleDAO[Aeroporto]):

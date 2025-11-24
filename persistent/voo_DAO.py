@@ -1,5 +1,5 @@
 from .base_DAO import PickleDAO
-from entities.voo import Voo
+from model.voo import Voo
 
 # [Voo] representa que o T em "Generic[T]" é Voo
 class VooDAO(PickleDAO[Voo]):

@@ -1,5 +1,5 @@
 from .base_DAO import PickleDAO
-from entities.companhia_aerea import CompanhiaAerea
+from model.companhia_aerea import CompanhiaAerea
 
 # [CompanhiaAerea] representa que o T em "Generic[T]" é CompanhiaAerea
 class CompanhiaAereaDAO(PickleDAO[CompanhiaAerea]):

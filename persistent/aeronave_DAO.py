@@ -1,5 +1,5 @@
 from .base_DAO import PickleDAO
-from entities.aeronave import Aeronave
+from model.aeronave import Aeronave
 
 class AeronaveDAO(PickleDAO[Aeronave]):
     def __init__(self):
