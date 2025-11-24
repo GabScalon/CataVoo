@@ -4,6 +4,7 @@ from views.aeronave_view import ViewAeronave
 from views.administrador_view import AdministradorView
 from views.voo_view import ViewVoo 
 from views.piloto_view import ViewPiloto
+from views.aeroporto_view import ViewAeroporto
 
 class TelaMenu(tk.Frame):
     def __init__(self, parent, usuario, controller, on_logout):
@@ -42,11 +43,16 @@ class TelaMenu(tk.Frame):
         )
         btn_comp.pack(fill='x', pady=5)
 
-        btn_aero = tk.Button(
+        btn_aeronave = tk.Button(
             btn_frame, text="Gerenciar Aeronaves (Frota)", 
             command=self.abrir_aeronaves, font=("Arial", 12), height=2
         )
-        btn_aero.pack(fill='x', pady=5)
+        btn_aeronave.pack(fill='x', pady=5)
+
+        btn_aeroporto = tk.Button(
+            btn_frame, text="Gerenciar Aeroportos", 
+            command=self.abrir_aeroportos, font=("Arial", 12), height=2
+        ).pack(fill='x', pady=5)
 
         # Botão para pilotos
         tk.Button(
@@ -88,6 +94,9 @@ class TelaMenu(tk.Frame):
     
     def abrir_pilotos(self):
         ViewPiloto(self.parent)
+
+    def abrir_aeroportos(self):
+        ViewAeroporto(self.parent)
 
     def sair(self):
         if self.on_logout:
