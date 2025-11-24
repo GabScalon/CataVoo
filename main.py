@@ -46,7 +46,7 @@ class App(tk.Tk):
         # Criamos o Repositório e o Controller aqui. Eles ficam vivos
         # durante toda a execução do programa.
         # ---------------------------------------------------------
-        self.repository = UsuarioRepository("usuarios.pkl")
+        self.repository = UsuarioRepository("persistent/dados/db_usuarios.pkl")
         self.controller = UsuarioController(self.repository)
 
         # Roda a verificação antes de mostrar qualquer tela

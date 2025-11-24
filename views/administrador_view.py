@@ -125,14 +125,20 @@ class AdministradorView(tk.Toplevel):
             messagebox.showinfo("Novo Cadastro", "CPF livre. Preencha os dados.")
 
     def __on_incluir(self):
-        # Aqui usamos o DTO atualizado SEM a senha
+        # --- CORREÇÃO: Validação para garantir que o CPF não é None ---
+        if not self.__cpf_em_memoria:
+            messagebox.showwarning("Aviso", "Por favor, verifique o CPF antes de incluir.")
+            return
+
+        # Aqui usamos o DTO atualizado sem a senha
         dto = CadastroUsuarioDTO(
             cpf=self.__cpf_em_memoria,
             nome=self.entry_nome.get(),
             email=self.entry_email.get(),
-            login=self.entry_login.get(), # Pegamos o login da tela
+            login=self.entry_login.get(), 
             tipo_usuario=self.tipo_usuario_var.get()
         )
+        
         status, msg = self.__controller.cadastrar_usuario(dto)
 
         if status == "SUCESSO":
@@ -140,6 +146,7 @@ class AdministradorView(tk.Toplevel):
             self.__limpar_formulario()
             self.entry_cpf.delete(0, 'end')
             self.__habilitar_formulario(False)
+            self.__cpf_em_memoria = None
         else:
             messagebox.showerror("Erro", msg)
 
