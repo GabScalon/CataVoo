@@ -54,15 +54,12 @@ class TelaLogin(tk.Toplevel):
             if nova_senha:
                 if self.controller.definir_nova_senha(usuario.cpf, nova_senha):
                     messagebox.showinfo("Sucesso", "Senha atualizada! Entrando...")
-                    # O usuário foi atualizado no banco, mas a instância 'usuario' local
-                    # ainda tem a flag True. Vamos atualizar a flag manualmente aqui 
-                    # para prosseguir, ou buscar do banco novamente.
                     usuario.confirmar_primeiro_acesso()
                 else:
                     messagebox.showerror("Erro", "Falha ao atualizar senha.")
                     return
             else:
-                return # Cancelou o dialog
+                return
 
         self.destroy()
         self.callback_sucesso(usuario)

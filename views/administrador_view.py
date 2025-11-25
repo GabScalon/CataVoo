@@ -10,8 +10,7 @@ class AdministradorView(tk.Toplevel):
         
         self.title("Gerenciar Usuários (Admin)")
         self.geometry("500x550")
-        
-        # Faz a janela ficar "presa" na frente da principal
+
         self.transient(parent)
         
         self.__setup_widgets()
@@ -77,7 +76,6 @@ class AdministradorView(tk.Toplevel):
         self.entry_nome.configure(state=estado_campos)
         self.entry_email.configure(state=estado_campos)
         
-        # Login só pode ser editado na inclusão (não mudamos login depois de criado aqui)
         if modo == "incluir":
             self.entry_login.configure(state='normal')
             self.option_tipo.configure(state='normal')
@@ -98,7 +96,7 @@ class AdministradorView(tk.Toplevel):
     def __preencher_formulario(self, usuario):
         self.entry_nome.insert(0, usuario.nome)
         self.entry_email.insert(0, usuario.email)
-        self.entry_login.insert(0, usuario.login) # Preenche o login
+        self.entry_login.insert(0, usuario.login)
         tipo = "ADMINISTRADOR" if "Administrador" in str(type(usuario)) else "FUNCIONARIO"
         self.tipo_usuario_var.set(tipo)
 
@@ -125,12 +123,10 @@ class AdministradorView(tk.Toplevel):
             messagebox.showinfo("Novo Cadastro", "CPF livre. Preencha os dados.")
 
     def __on_incluir(self):
-        # --- CORREÇÃO: Validação para garantir que o CPF não é None ---
         if not self.__cpf_em_memoria:
             messagebox.showwarning("Aviso", "Por favor, verifique o CPF antes de incluir.")
             return
 
-        # Aqui usamos o DTO atualizado sem a senha
         dto = CadastroUsuarioDTO(
             cpf=self.__cpf_em_memoria,
             nome=self.entry_nome.get(),

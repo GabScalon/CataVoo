@@ -62,7 +62,6 @@ class PilotoController:
 
     def excluir(self, id_piloto):
         # Verifica dependência de Voo (Não pode apagar piloto com voo marcado)
-        # Como o VooDAO não tem um método específico "existem_voos_para_piloto", iteramos manualmente aqui.
         voos = self.voo_dao.get_all()
         for v in voos:
             if v.piloto_id == id_piloto:

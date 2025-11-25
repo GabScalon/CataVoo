@@ -10,14 +10,12 @@ def verificar_setup_inicial(controller):
     Verifica se o banco de dados está vazio.
     Se estiver, cria um usuário ADMINISTRADOR padrão.
     """
-    # Usa o método público do controller (sem acessar atributos privados com __)
     usuarios = controller.listar_todos()
     
     if not usuarios:
         print("--- SETUP INICIAL: Banco de dados vazio. ---")
         print("--- Criando Administrador Padrão... ---")
         
-        # Cria o DTO. Nota: Não passamos senha, pois o sistema gera baseada no CPF.
         dto = CadastroUsuarioDTO(
             cpf="000.000.000-00",
             nome="Super Administrador",
@@ -40,12 +38,6 @@ class App(tk.Tk):
         super().__init__()
         self.title("Sistema CataVoo")
         self.geometry("800x600")
-        
-        # ---------------------------------------------------------
-        # 1. INJEÇÃO DE DEPENDÊNCIA (O "Cérebro" do sistema)
-        # Criamos o Repositório e o Controller aqui. Eles ficam vivos
-        # durante toda a execução do programa.
-        # ---------------------------------------------------------
         self.repository = UsuarioRepository("persistent/dados/db_usuarios.pkl")
         self.controller = UsuarioController(self.repository)
 
@@ -75,9 +67,6 @@ class App(tk.Tk):
             if isinstance(widget, tk.Frame):
                 widget.destroy()
 
-        # Cria o Menu Principal
-        # IMPORTANTE: Passamos o 'self.controller' para o Menu,
-        # para que ele possa abrir a tela de Gerenciar Usuários depois.
         menu = TelaMenu(
             parent=self, 
             usuario=usuario, 

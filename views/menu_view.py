@@ -5,12 +5,13 @@ from views.administrador_view import AdministradorView
 from views.voo_view import ViewVoo 
 from views.piloto_view import ViewPiloto
 from views.aeroporto_view import ViewAeroporto
+from views.relatorio_view import RelatorioView
 
 class TelaMenu(tk.Frame):
     def __init__(self, parent, usuario, controller, on_logout):
         super().__init__(parent)
         self.parent = parent
-        self.usuario = usuario # Importante: Guardamos o usuário aqui
+        self.usuario = usuario 
         self.controller = controller
         self.on_logout = on_logout
         
@@ -21,58 +22,75 @@ class TelaMenu(tk.Frame):
         lbl_tipo = tk.Label(self, text=f"Perfil: {usuario.__class__.__name__}", font=("Arial", 10), fg="gray")
         lbl_tipo.pack(pady=(0, 20))
 
-        # --- Botões ---
+        # --- Frame dos Botões ---
         btn_frame = tk.Frame(self)
         btn_frame.pack(pady=10, fill='x', padx=50)
 
-        # BOTÃO DE VOOS
-        # Colocamos em primeiro pois é a função principal do sistema
+        # ---------------------------------------------------------------------
+        # ÁREA COMUM (Disponível para Funcionários e Admins)
+        # ---------------------------------------------------------------------
+
+        # BOTÃO DE VOOS (Painel Principal)
         btn_voos = tk.Button(
             btn_frame, 
             text="Gerenciar Voos (Painel Principal)", 
             command=self.abrir_voos, 
             font=("Arial", 12, "bold"),
-            bg="#ddffdd", # Um verde claro para destacar
+            bg="#ddffdd", # Destaque verde
             height=2
         )
         btn_voos.pack(fill='x', pady=5)
 
-        btn_comp = tk.Button(
-            btn_frame, text="Gerenciar Companhias Aéreas", 
-            command=self.abrir_companhias, font=("Arial", 12), height=2
-        )
-        btn_comp.pack(fill='x', pady=5)
-
-        btn_aeronave = tk.Button(
-            btn_frame, text="Gerenciar Aeronaves (Frota)", 
-            command=self.abrir_aeronaves, font=("Arial", 12), height=2
-        )
-        btn_aeronave.pack(fill='x', pady=5)
-
-        btn_aeroporto = tk.Button(
-            btn_frame, text="Gerenciar Aeroportos", 
-            command=self.abrir_aeroportos, font=("Arial", 12), height=2
-        ).pack(fill='x', pady=5)
-
-        # Botão para pilotos
-        tk.Button(
-            btn_frame, text="Gerenciar Pilotos", 
-            command=self.abrir_pilotos, font=("Arial", 12), height=2
-        ).pack(fill='x', pady=5)
-
-        # Botão Usuários (Apenas Admin)
+        # ---------------------------------------------------------------------
+        # ÁREA EXCLUSIVA DE ADMINISTRADOR
+        # ---------------------------------------------------------------------
         if usuario.__class__.__name__ == 'Administrador':
-            btn_users = tk.Button(
+
+            tk.Label(btn_frame, text="--- Administração ---", fg="gray").pack(pady=(10, 5))
+
+            tk.Button(
+                btn_frame, text="Gerenciar Companhias Aéreas", 
+                command=self.abrir_companhias, font=("Arial", 12), height=2
+            ).pack(fill='x', pady=5)
+
+            tk.Button(
+                btn_frame, text="Gerenciar Aeronaves (Frota)", 
+                command=self.abrir_aeronaves, font=("Arial", 12), height=2
+            ).pack(fill='x', pady=5)
+
+            tk.Button(
+                btn_frame, text="Gerenciar Aeroportos", 
+                command=self.abrir_aeroportos, font=("Arial", 12), height=2
+            ).pack(fill='x', pady=5)
+
+            tk.Button(
+                btn_frame, text="Gerenciar Pilotos", 
+                command=self.abrir_pilotos, font=("Arial", 12), height=2
+            ).pack(fill='x', pady=5)
+
+            tk.Button(
                 btn_frame,
                 text="Gerenciar Usuários (Admin)",
                 command=self.abrir_usuarios,
                 font=("Arial", 12),
                 height=2,
                 bg="#e6f3ff"
-            )
-            btn_users.pack(fill='x', pady=5)
+            ).pack(fill='x', pady=5)
+
+            tk.Button(
+                btn_frame,
+                text="Relatórios de Sistema (Logs)",
+                command=self.abrir_relatorios,
+                font=("Arial", 12),
+                height=2,
+                bg="#e6f3ff"
+            ).pack(fill='x', pady=5)
 
         tk.Button(self, text="Sair do Sistema", command=self.sair, bg="#ffcccc", fg="red").pack(side="bottom", pady=30)
+
+    def abrir_voos(self):
+        """Abre a tela de voos passando o usuário logado."""
+        ViewVoo(self.parent, self.usuario)
 
     def abrir_companhias(self):
         ViewCompanhia(self.parent)
@@ -80,23 +98,17 @@ class TelaMenu(tk.Frame):
     def abrir_aeronaves(self):
         ViewAeronave(self.parent)
 
-    def abrir_usuarios(self):
-        AdministradorView(self.parent, self.controller)
+    def abrir_aeroportos(self):
+        ViewAeroporto(self.parent)
 
-    # MÉTODO PARA ABRIR VOOS
-    def abrir_voos(self):
-        """
-        Abre a tela de voos passando o usuário logado.
-        A própria ViewVoo vai decidir se habilita os botões de edição
-        baseado nesse usuário.
-        """
-        ViewVoo(self.parent, self.usuario)
-    
     def abrir_pilotos(self):
         ViewPiloto(self.parent)
 
-    def abrir_aeroportos(self):
-        ViewAeroporto(self.parent)
+    def abrir_usuarios(self):
+        AdministradorView(self.parent, self.controller)
+
+    def abrir_relatorios(self):
+        RelatorioView(self.parent)
 
     def sair(self):
         if self.on_logout:

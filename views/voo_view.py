@@ -1,10 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
-
-# Ajuste os imports conforme a estrutura da sua pasta
 from controllers.voo_controller import VooController
-# Supondo que você tenha a classe Administrador para checagem de tipo
 from model.administrador import Administrador 
 
 class ViewVoo(tk.Toplevel):
@@ -17,7 +14,6 @@ class ViewVoo(tk.Toplevel):
         self.geometry("1000x600")
         self.transient(parent)
 
-        # Variáveis de apoio para mapeamento (Nome -> ID)
         self.map_aeroportos = {}
         self.map_aeronaves = {}
         self.map_companhias = {}
@@ -148,7 +144,7 @@ class ViewVoo(tk.Toplevel):
         aeros = self.controller.get_aeroportos_para_combo()
         self.map_aeroportos = {f"{a.nome} (ID {a.id})": a.id for a in aeros}
         
-        # Aeronaves
+        # Aeronaves (Correção: Removida matricula)
         naves = self.controller.get_aeronaves_para_combo()
         self.map_aeronaves = {f"{n.modelo} (ID {n.id})": n.id for n in naves}
 
@@ -156,7 +152,7 @@ class ViewVoo(tk.Toplevel):
         comps = self.controller.get_companhias_para_combo()
         self.map_companhias = {f"{c.nome} (ID {c.id})": c.id for c in comps}
 
-        # Pilotos
+        # Pilotos (Correção: Usando codigoDeLicensa)
         pils = self.controller.get_pilotos_para_combo()
         self.map_pilotos = {f"{p.nome} - Licença: {p.codigoDeLicensa} (ID {p.id})": p.id for p in pils}
 
@@ -187,8 +183,6 @@ class ViewVoo(tk.Toplevel):
 
         frame = ttk.Frame(top, padding=20)
         frame.pack(fill='both', expand=True)
-
-        # --- CAMPOS CORRIGIDOS (Sem Walrus Operator ':=') ---
 
         # Código
         self.ent_codigo = ttk.Entry(frame)
@@ -300,9 +294,9 @@ class ViewVoo(tk.Toplevel):
             }
 
             if id_voo:
-                res, msg = self.controller.atualizar(id_voo, dados)
+                res, msg = self.controller.atualizar(id_voo, dados, self.usuario)
             else:
-                res, msg = self.controller.cadastrar(dados)
+                res, msg = self.controller.cadastrar(dados, self.usuario)
 
             if res:
                 messagebox.showinfo("Sucesso", msg)
@@ -323,13 +317,10 @@ class ViewVoo(tk.Toplevel):
         id_voo = int(self.tree.item(item_selecionado[0], 'values')[0])
         
         if messagebox.askyesno("Confirmar", "Tem certeza que deseja excluir este voo?"):
-            sucesso, msg = self.controller.excluir(id_voo)
+            sucesso, msg = self.controller.excluir(id_voo, self.usuario)
             messagebox.showinfo("Info", msg)
             if sucesso: self.__carregar_dados()
 
-    # --------------------------------------------------------------------------
-    # Alteração de Status - Permitido para Todos
-    # --------------------------------------------------------------------------
     def __abrir_alterar_status(self):
         item_selecionado = self.tree.selection()
         if not item_selecionado:
@@ -354,7 +345,7 @@ class ViewVoo(tk.Toplevel):
 
         def confirmar():
             novo = combo_status.get()
-            sucesso, msg = self.controller.alterar_status(id_voo, novo)
+            sucesso, msg = self.controller.alterar_status(id_voo, novo, self.usuario)
             if sucesso:
                 messagebox.showinfo("Sucesso", msg)
                 self.__carregar_dados()

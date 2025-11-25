@@ -48,7 +48,6 @@ class ViewCompanhia(tk.Toplevel):
     def _get_id_selecionado(self):
         sel = self.tree.focus()
         if not sel: return None
-        # CORREÇÃO AQUI: Convertendo explicitamente para int
         try:
             valor = self.tree.item(sel)['values'][0]
             return int(valor)
@@ -73,8 +72,6 @@ class ViewCompanhia(tk.Toplevel):
     def editar_selecionado(self):
         id_comp = self._get_id_selecionado()
         if id_comp is None: return
-        
-        # Agora id_comp é garantidamente um int
         comp = self.controlador.companhia_dao.get_by_id(id_comp)
         if comp:
             self.abrir_formulario(comp)

@@ -8,7 +8,7 @@ class Usuario(ABC):
         self.__email = email
         self.__login = login
         
-        # Dados de Segurança (Nunca armazena a senha real)
+        # Dados de Segurança
         self.__senha_hash = senha_hash
         self.__salt = salt
         self.__primeiro_acesso = primeiro_acesso

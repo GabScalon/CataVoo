@@ -124,8 +124,7 @@ class FormularioAeronave(tk.Toplevel):
 
     def _preencher(self):
         a = self.aeronave
-        
-        # --- CORREÇÃO APLICADA: Cláusula de Guarda ---
+
         if a is None:
             return
 
